@@ -1,5 +1,4 @@
 <?php
-echo phpinfo();
 /*
 	I'd like for this function to take in an enum to limit the 
 	possible file names, but for now I just trust the caller.
@@ -56,7 +55,14 @@ function fix_case($str,$case) {
 		case 'upper':
 			return strtoupper($str);
 		case 'title':
-			return ucwords($str,"-");
+			//The delimiter parameter doesn't exist on the version of PHP I have on the remote server
+			//return ucwords($str,"-");
+			//We'll do manually what the newer ucwords does for us
+			$title_str = array();
+			foreach (explode("-", $str) as $word) {
+				array_push($title_str,ucwords($word));
+			}
+			return implode("-", $title_str);
 		case 'random':
 			return random_case($str);
 		default:
