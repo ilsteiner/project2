@@ -6,7 +6,7 @@ ini_set('display_errors', 1); # Display errors on page (instead of a log file)
 <html class="no-js" lang="">
     <head>
         <meta charset="utf-8">
-        <title>Project 2</title>
+        <title>sad-boar-leaps</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -16,6 +16,10 @@ ini_set('display_errors', 1); # Display errors on page (instead of a log file)
         <?php require 'vals.php' ?>
     </head>
     <body>
+        <header id="header">
+            <h1>sad-boar-leaps</h1>
+            <h4>An XKCD-style password generator</h2>
+        </header>        
         <div class="container">
             <div class="row">
                 <div class="well well-lg" id="password-ouput">
