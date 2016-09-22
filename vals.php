@@ -14,4 +14,6 @@
 	$SEPARATOR = '-';
 
 	$CHARS = htmlspecialchars(" !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~");
+
+	$MAX_TRIES = 10;
 ?>

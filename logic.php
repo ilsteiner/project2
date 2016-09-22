@@ -4,11 +4,11 @@
 	possible file names, but for now I just trust the caller.
 */
 function get_word($word_type, $used = array()) {
-	$words = file($word_type . ".txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	$words = file($word_type . "s.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 	$word;
 	$tries = 0;
-	do{
-		$word = array_rand($words, 1);
+	do {
+		$word = $words[array_rand($words, 1)];
 
 		foreach ($used as $taken) {
 			if($word != $taken) {
@@ -16,11 +16,11 @@ function get_word($word_type, $used = array()) {
 			}
 		}
 
-		$tries++
-	} while $tries <= $GLOBALS["MAX_TRIES"];
+		$tries++;
+	} while ($tries <= $GLOBALS["MAX_TRIES"]);
 
 	//Couldn't get an unused word, so returning a duplicate
-	return array_rand($words, 1)
+	return $words[array_rand($words, 1)];
 }
 
 // Wrapper functions for get_word(), just to make things easier
@@ -104,13 +104,13 @@ function add_numbers(&$password,$count=1){
 }
 
 //We pass by reference just to make things easier
-function add_special_chars(&$password,$count=1){
+function add_special_chars(&$password,$count=1) {
 	$chars = $GLOBALS["CHARS"];
 
 	/*Add the specified number of special characters
 	  Alternate between the beginning and the end of the password
 	*/
-	for($i = 0; i<$count; i++){
+	for($i = 0; $i<$count; $i++){
 		if($i % 2){
 			$chars[rand(0, strlen($chars)-1)] . $password;
 		}
@@ -130,8 +130,10 @@ function make_password($num_words,$max_length = 0,$with_number,$special_chars) {
 		not strictly adhered to.
 	*/
 
-	$MAX_TRIES = 10;
+	$MAX_TRIES = $GLOBALS["MAX_TRIES"];
 	$tries = 0;
+
+	$password = '';
 
 	$az_max = $max_length - $special_chars - ($with_number == 'Yes' ? 1 : 0);
 
@@ -139,17 +141,29 @@ function make_password($num_words,$max_length = 0,$with_number,$special_chars) {
 	if($num_words < 3) {
 		do {
 			$password = get_adjective() . $sep . get_noun();
-		} while (strlen($password) > $az_max && $tries <= $MAX_TRIES)
+		} while (strlen($password) > $az_max && $tries <= $MAX_TRIES);
 	}
 
 	//If it is larger, then use noun and verb, filled with adjectives as needed
 	else {
+		$password = get_noun() . $sep . get_verb();
+		$used_adjectives = array();
 
+		//Add the adjectives
+		for($i=0;$i<$num_words-2;$i++){
+			$tries = 0;
+			do {
+				$password = get_adjective($used_adjectives) . $sep . $password;
+				$tries++;
+			} while (strlen($password) > $az_max && $tries <= $MAX_TRIES);
+		}
 	}
 
 	if($tries == $MAX_TRIES) {
-		echo "Password may be longer than expected."
+		echo "Password may be longer than expected.";
 	}
+
+	echo $password;
 }
 
 //To make the form processing function run when we submit the form
