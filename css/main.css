@@ -3,3 +3,23 @@ label span.error-text {
 	display: block;
 	font-family: serif;
 }
+
+input.form-control {
+	font-size: 6em;
+	height: 100%;
+	text-align: center;
+}
+
+label.control-label {
+	font-size: 2em;
+}
+
+label.control-label input.case-type {
+	margin-left: 20px;
+	box-shadow: none;
+}
+
+div #password-ouput {
+	text-align: center;
+	font-size: 2vw;
+}
