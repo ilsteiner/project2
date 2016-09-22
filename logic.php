@@ -36,23 +36,52 @@ function get_adjective($used = array()) {
 	return get_word("adjective", $used);
 }
 
+function random_case($str) {
+	$char_array = str_split(strtolower($str));
+
+	foreach ($char_array as &$char) {
+		if(rand(0,1) % 2) {
+			$char = strtoupper($char);
+		}
+	}
+
+	return implode($char_array);
+}
+
+function fix_case($str,$case) {
+	switch ($case) {
+		case 'lower':
+			return strtolower($str);
+		case 'upper':
+			return strtoupper($str);
+		case 'title':
+			return ucwords($str,"-");
+		case 'random':
+			return random_case($str);
+		default:
+			return $str;
+	}
+}
+
 function process_form() {
 	$num_words = htmlspecialchars($_GET["num_words"]);
 	$max_length = htmlspecialchars($_GET["max_length"]);
 	$with_number = (isset($_GET["with_number"]) ? htmlspecialchars($_GET["with_number"]) : "No");
 	$special_chars = htmlspecialchars($_GET["special_chars"]);
+	$case_type = htmlspecialchars($_GET["case_type"]);
 
-	$errors = validate_input($num_words, $max_length, $with_number, $special_chars);
+	$errors = validate_input($num_words, $max_length, $with_number, $special_chars, $case_type);
 
 	if(count($errors) >= 1) {
+		echo '<script>var errors = ' . json_encode($errors) . '</script>';
 		return json_encode($errors);
 	}
 	else {
-		return make_password($num_words, $max_length, $with_number, $special_chars);
+		return make_password($num_words, $max_length, $with_number, $special_chars, $case_type);
 	}
 }
 
-function validate_input($num_words,$max_length = 0,$with_number,$special_chars) {
+function validate_input($num_words,$max_length = 0,$with_number,$special_chars,$case_type) {
 	$errors = array();
 
 	$MIN = $GLOBALS['MIN'];
@@ -84,6 +113,10 @@ function validate_input($num_words,$max_length = 0,$with_number,$special_chars) 
 
 	if($with_number != "Yes" && $with_number != "No") {
 		$errors['with_number'] = "With number checkbox must be either 'Yes' or 'No'.";
+	}
+
+	if(!in_array($case_type, $GLOBALS['CASE_TYPES'])){
+		$errors['case_type'] = "Not a valid case type.";
 	}
 
 	return $errors;
@@ -120,7 +153,7 @@ function add_special_chars(&$password,$count=1) {
 	}
 }
 
-function make_password($num_words,$max_length = 0,$with_number,$special_chars) {
+function make_password($num_words,$max_length = 0,$with_number,$special_chars,$case_type) {
 	$sep = $GLOBALS["SEPARATOR"];
 
 	/*
@@ -155,13 +188,15 @@ function make_password($num_words,$max_length = 0,$with_number,$special_chars) {
 			do {
 				$password = get_adjective($used_adjectives) . $sep . $password;
 				$tries++;
-			} while (strlen($password) > $az_max && $tries <= $MAX_TRIES);
+			} while (strlen($password) <= $az_max && $tries <= $MAX_TRIES);
 		}
 	}
 
 	if($tries == $MAX_TRIES) {
 		echo "Password may be longer than expected.";
 	}
+
+	$password = fix_case($password,$case_type);
 
 	echo $password;
 }

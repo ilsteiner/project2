@@ -1,0 +1,5 @@
+label span.error-text {
+	font-style: italic;
+	display: block;
+	font-family: serif;
+}
