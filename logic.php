@@ -65,23 +65,22 @@ function fix_case($str,$case) {
 
 function process_form() {
 	$num_words = htmlspecialchars($_GET["num_words"]);
-	$max_length = htmlspecialchars($_GET["max_length"]);
 	$with_number = (isset($_GET["with_number"]) ? htmlspecialchars($_GET["with_number"]) : "No");
 	$special_chars = htmlspecialchars($_GET["special_chars"]);
 	$case_type = htmlspecialchars($_GET["case_type"]);
 
-	$errors = validate_input($num_words, $max_length, $with_number, $special_chars, $case_type);
+	$errors = validate_input($num_words, $with_number, $special_chars, $case_type);
 
 	if(count($errors) >= 1) {
 		echo '<script>var errors = ' . json_encode($errors) . '</script>';
 		return json_encode($errors);
 	}
 	else {
-		return make_password($num_words, $max_length, $with_number, $special_chars, $case_type);
+		return make_password($num_words, $with_number, $special_chars, $case_type);
 	}
 }
 
-function validate_input($num_words,$max_length = 0,$with_number,$special_chars,$case_type) {
+function validate_input($num_words,$with_number,$special_chars,$case_type) {
 	$errors = array();
 
 	$MIN = $GLOBALS['MIN'];
@@ -93,14 +92,6 @@ function validate_input($num_words,$max_length = 0,$with_number,$special_chars,$
 			. $MIN["words"] 
 			. " and " 
 			. $MAX["words"];
-	}
-
-	if($max_length < $MIN["chars"] || $max_length > $MAX["chars"]) {
-		$errors['max_length'] = 
-			"Password length should be between " 
-			. $MIN["chars"] 
-			. " and " 
-			. $MAX["chars"];
 	}
 
 	if($special_chars < $MIN["special_chars"] || $special_chars > $MAX["special_chars"]) {
@@ -122,22 +113,22 @@ function validate_input($num_words,$max_length = 0,$with_number,$special_chars,$
 	return $errors;
 }
 
-//We pass by reference just to make things easier
-function add_numbers(&$password,$count=1){
+function add_numbers($password,$count=1){
 	/*Add a number to either the 
 	  beginning or the end of the password
 	*/
 	$rand_num = rand(0,9);
 	if($rand_num % 2) {
-		$password . $rand_num;
+		$password = $password . $GLOBALS['SEPARATOR'] . $rand_num;
 	}
 	else {
-		$rand_num . $password;
+		$password = $rand_num . $GLOBALS['SEPARATOR'] . $password;
 	}
+
+	return $password;
 }
 
-//We pass by reference just to make things easier
-function add_special_chars(&$password,$count=1) {
+function add_special_chars($password,$count=1) {
 	$chars = $GLOBALS["CHARS"];
 
 	/*Add the specified number of special characters
@@ -145,36 +136,24 @@ function add_special_chars(&$password,$count=1) {
 	*/
 	for($i = 0; $i<$count; $i++){
 		if($i % 2){
-			$chars[rand(0, strlen($chars)-1)] . $password;
+			$password = $chars[rand(0, strlen($chars)-1)] . $password;
 		}
 		else{
-			$password . $chars[rand(0, strlen($chars)-1)];
+			$password = $password . $chars[rand(0, strlen($chars)-1)];
 		}
 	}
+
+	return $password;
 }
 
-function make_password($num_words,$max_length = 0,$with_number,$special_chars,$case_type) {
+function make_password($num_words,$with_number,$special_chars,$case_type) {
 	$sep = $GLOBALS["SEPARATOR"];
-
-	/*
-		Our wordlist is relatively small and our search
-		algorithm is VERY naive. As such the "max length"
-		parameter is just a "best try" parameter and is
-		not strictly adhered to.
-	*/
-
-	$MAX_TRIES = $GLOBALS["MAX_TRIES"];
-	$tries = 0;
 
 	$password = '';
 
-	$az_max = $max_length - $special_chars - ($with_number == 'Yes' ? 1 : 0);
-
 	//If we are making a minimum size password, just use a noun and an adjective
 	if($num_words < 3) {
-		do {
-			$password = get_adjective() . $sep . get_noun();
-		} while (strlen($password) > $az_max && $tries <= $MAX_TRIES);
+		$password = get_adjective() . $sep . get_noun();
 	}
 
 	//If it is larger, then use noun and verb, filled with adjectives as needed
@@ -185,18 +164,21 @@ function make_password($num_words,$max_length = 0,$with_number,$special_chars,$c
 		//Add the adjectives
 		for($i=0;$i<$num_words-2;$i++){
 			$tries = 0;
-			do {
-				$password = get_adjective($used_adjectives) . $sep . $password;
-				$tries++;
-			} while (strlen($password) <= $az_max && $tries <= $MAX_TRIES);
+			$adjective = get_adjective($used_adjectives);
+			$password = $adjective . $sep . $password;
+			array_push($used_adjectives, $adjective);
 		}
 	}
 
-	if($tries == $MAX_TRIES) {
-		echo "Password may be longer than expected.";
+	$password = fix_case($password,$case_type);
+
+	if($special_chars > 0) {
+		$password = add_special_chars($password,$special_chars);
 	}
 
-	$password = fix_case($password,$case_type);
+	if($with_number == "Yes") {
+		$password = add_numbers($password);
+	}
 
 	echo $password;
 }

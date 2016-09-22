@@ -15,11 +15,11 @@
 
 	$CHARS = htmlspecialchars(" !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~");
 
-	$MAX_TRIES = 10;
+	$MAX_TRIES = 20;
 
 	$CASE_TYPES = array(
 		'lower',
 		'upper',
 		'title',
-		'random')
+		'random');
 ?>
