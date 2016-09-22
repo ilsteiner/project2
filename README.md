@@ -1,11 +1,6 @@
 # project2
 Project 2 for CSCI E-15, Dynamic Web Applications
 
-Project URL
-
-Background image CSS:
-
-
 * Project URL
   * p2.lsteiner.us
 * Description
