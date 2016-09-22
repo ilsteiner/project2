@@ -5,4 +5,8 @@ $(document).ready(function($) {
 			$("#" + i).prev('label').append('<span class="error-text">' + error + '</span>');
 		});
 	}
+
+	if($("#with_number").hasClass('toggle-me')) {
+		$("#with_number").bootstrapToggle('on');
+	}
 });

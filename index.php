@@ -35,7 +35,7 @@ ini_set('display_errors', 1); # Display errors on page (instead of a log file)
                                         name="num_words"
                                         class="form-control"
                                         type="number"
-                                        value="4"
+                                        value="<?php echo isset($_GET["num_words"]) ? $_GET["num_words"] : 4;?>"
                                         min="<?php echo $MIN['words'] ?>"
                                         max="<?php echo $MAX['words'] ?>">
                                 </div>
@@ -50,31 +50,33 @@ ini_set('display_errors', 1); # Display errors on page (instead of a log file)
                                         name="special_chars"
                                         class="form-control"
                                         type="number"
-                                        value="0"
+                                        value="<?php echo isset($_GET["special_chars"]) ? $_GET["special_chars"] : 0;?>"
                                         min="<?php echo $MIN['special_chars'] ?>"
                                         max="<?php echo $MAX['special_chars'] ?>">
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label" for="with_number">Include a number?</label>
                                     <input
                                         id="with_number"
                                         value="Yes"
                                         name="with_number"
-                                        class="form-control"
+                                        class="form-control<?php echo isset($_GET["with_number"]) && $_GET["with_number"] == 'Yes' ? ' toggle-me' : ''?>"
                                         type="checkbox"
                                         data-toggle="toggle"
-                                        data-size="large"
+                                        data-width="70%"
+                                        data-height="100px"
                                         data-offstyle="danger"
                                         data-onstyle="success"
                                         data-on="Yes"
-                                        data-off="No">
+                                        data-off="No"
+                                        >
                                 </div>
                             </div>
                             
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">What case should the password use?</label>
                                         <?php
@@ -86,8 +88,20 @@ ini_set('display_errors', 1); # Display errors on page (instead of a log file)
                                                 name = "case_type"
                                                 value = "' . $case_type . '"
                                                 id = ' . $case_type . '"
-                                                class = "case-type form-control"' . ($case_type == "lower" ? 'checked' : '') .
-                                                '/>';
+                                                class = "case-type form-control"';
+
+                                                if(isset($_GET["case_type"])) {
+                                                    if($case_type == $_GET["case_type"]) {
+                                                        echo 'checked';
+                                                    }
+                                                }
+                                                else {
+                                                    if($case_type == "lower"){
+                                                        echo 'checked';
+                                                    }
+                                                }
+
+                                                echo '/>';
 
                                                 echo fix_case($case_type,$case_type);
 

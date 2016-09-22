@@ -187,3 +187,7 @@ function make_password($num_words,$with_number,$special_chars,$case_type) {
 if(count($_GET) > 0) {
 	process_form();
 }
+//Make a default password when the form isn't filled
+else {
+	make_password(4,"No",0,"lower");
+}
