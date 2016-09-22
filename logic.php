@@ -1,4 +1,5 @@
 <?php
+echo phpinfo();
 /*
 	I'd like for this function to take in an enum to limit the 
 	possible file names, but for now I just trust the caller.
