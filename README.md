@@ -13,7 +13,7 @@ Background image CSS:
   * Includes parameters for length (in words), number of special characters, whether or not to include a number, and the case scheme to use
   *Uses GET rather than POST to allow saving of password URLs
 * Screencast
-  * 
+  * https://youtu.be/yHdiKyokYIk
 
 * Frameworks and resources
   * Bootstrap: http://getbootstrap.com
