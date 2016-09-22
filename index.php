@@ -91,7 +91,12 @@ ini_set('display_errors', 1); # Display errors on page (instead of a log file)
                                                 class = "case-type form-control"';
 
                                                 if(isset($_GET["case_type"])) {
-                                                    if($case_type == $_GET["case_type"]) {
+                                                    if(!in_array($_GET["case_type"], $CASE_TYPES)){
+                                                        if($case_type == "lower"){
+                                                            echo 'checked';
+                                                        }
+                                                    }
+                                                    else if($case_type == $_GET["case_type"]) {
                                                         echo 'checked';
                                                     }
                                                 }

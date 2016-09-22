@@ -86,7 +86,10 @@ function validate_input($num_words,$with_number,$special_chars,$case_type) {
 	$MIN = $GLOBALS['MIN'];
 	$MAX = $GLOBALS['MAX'];
 
-	if($num_words < $MIN["words"] || $num_words > $MAX["words"]) {
+	if(!is_numeric($num_words)){
+		$errors['num_words'] = "Number of words must be a number!";
+	}
+	else if($num_words < $MIN["words"] || $num_words > $MAX["words"]) {
 		$errors['num_words'] = 
 			"Number of words should be between " 
 			. $MIN["words"] 
@@ -94,7 +97,10 @@ function validate_input($num_words,$with_number,$special_chars,$case_type) {
 			. $MAX["words"];
 	}
 
-	if($special_chars < $MIN["special_chars"] || $special_chars > $MAX["special_chars"]) {
+	if(!is_numeric($special_chars)){
+		$errors['special_chars'] = "Number of special characters must be a number!";
+	}
+	else if($special_chars < $MIN["special_chars"] || $special_chars > $MAX["special_chars"]) {
 		$errors['special_chars'] = 
 			"Number of special characters should be between " 
 			. $MIN["special_chars"] 
@@ -103,7 +109,7 @@ function validate_input($num_words,$with_number,$special_chars,$case_type) {
 	}
 
 	if($with_number != "Yes" && $with_number != "No") {
-		$errors['with_number'] = "With number checkbox must be either 'Yes' or 'No'.";
+		$errors['with_number'] = "'With number' checkbox must be either 'Yes' or 'No'.";
 	}
 
 	if(!in_array($case_type, $GLOBALS['CASE_TYPES'])){
